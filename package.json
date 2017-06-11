@@ -4,7 +4,9 @@
   "description": "Render as a service",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "ava",
+    "deploy": "wt create --bundle .",
+    "serve": "wt serve ."
   },
   "repository": {
     "type": "git",
@@ -15,5 +17,13 @@
   "bugs": {
     "url": "https://github.com/toboid/raas/issues"
   },
-  "homepage": "https://github.com/toboid/raas#readme"
+  "homepage": "https://github.com/toboid/raas#readme",
+  "dependencies": {
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4"
+  },
+  "devDependencies": {
+    "ava": "^0.19.1",
+    "axios": "^0.16.2"
+  }
 }
