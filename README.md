@@ -15,3 +15,4 @@ This solution is currently only suitable for single-tenanted use as it executes 
 # Further work
 * Pass url instead of the inlining the module source in the request. This would facilitate caching of compiled components and reduce request size.
 * Allow the client to request a named export of the common.js module. This would allow selection of components to render from a bundle of multiple components which could be held in cache and referred to each other.
+* This task does not currently work with wt-cli's bundling. This is because the task uses `react-dom/server` and the bundling functionality adds it to the bundle as well as including installing it in the container. Using bundling would allow the rendering code to be moved to it's own file and tested without being wrapped in a webtask.
