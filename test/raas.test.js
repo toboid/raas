@@ -2,7 +2,10 @@
 
 const axios = require('axios');
 const test = require('ava');
-const {exec} = require('child_process');
+const child = require('child_process');
+const fs = require('fs');
+const path = require('path');
+const HelloSrc = fs.readFileSync(path.join(__dirname, '_HelloComponent.js'));
 
 function extractWebtaskUrl (text) {
     const match = /(https:\/\/wt-\w+-0.run.webtask.io\/raas-test)/.exec(text);
@@ -12,7 +15,7 @@ function extractWebtaskUrl (text) {
 let webtaskUrl;
 
 test.cb.before((t) => {
-    exec('wt create -n raas-test -b .', (error, stdout) => {
+    child.exec('wt create -n raas-test --parse-body .', (error, stdout) => {
         if (error) {
             return t.end(error);
         }
@@ -23,10 +26,30 @@ test.cb.before((t) => {
 });
 
 test.cb.after.always((t) => {
-    exec('wt rm raas-test', error => t.end(error));
+    child.exec('wt rm raas-test', error => t.end(error));
 });
 
-test('raas returns hello world', async (t) => {
-    const response = await axios.get(webtaskUrl);
-    t.is(response.data, 'Hello world');
+test('renders a component', async (t) => {
+    const response = await axios.post(webtaskUrl, {
+        script: HelloSrc.toString(),
+        props: {
+            name: 'world'
+        }
+    });
+
+    t.is(response.data, '<div data-reactroot="" data-reactid="1" data-react-checksum="1022694294">Hello world</div>');
 });
+
+test('renders static markup', async (t) => {
+    const response = await axios.post(webtaskUrl, {
+        script: HelloSrc.toString(),
+        props: {
+            name: 'world'
+        },
+        options: {
+            static: true
+        }
+    });
+    t.is(response.data, '<div>Hello world</div>');
+});
+
