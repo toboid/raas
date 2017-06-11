@@ -15,10 +15,17 @@ function serverRender (src, props, opts) {
 }
 
 module.exports = function (context, callback) {
-    const markup = serverRender(
-        context.data.script,
-        context.data.props,
-        context.data.options
-    );
+    if (!context.body.script) {
+        return callback('body.script field required');
+    }
+
+    let markup;
+
+    try {
+        markup = serverRender(context.body.script, context.body.props, context.body.options);
+    } catch (ex) {
+        return callback('Failed to render component');
+    }
+
     callback(null, markup);
 };

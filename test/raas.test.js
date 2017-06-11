@@ -53,3 +53,23 @@ test('renders static markup', async (t) => {
     t.is(response.data, '<div>Hello world</div>');
 });
 
+test('returns 400 for missing script', async (t) => {
+    const response = await axios.post(
+        webtaskUrl,
+        {},
+        {validateStatus: status => status === 400}
+    );
+    t.is(response.status, 400);
+    t.is(response.data.details, 'body.script field required');
+});
+
+test('returns 400 for invalid script', async (t) => {
+    const response = await axios.post(
+        webtaskUrl,
+        {script: 'foo', props: {name: 'world'}},
+        {validateStatus: status => status === 400}
+    );
+    t.is(response.status, 400);
+    t.is(response.data.details, 'Failed to render component');
+});
+
